@@ -11,7 +11,6 @@ import java.util.List;
 
 import com.edutech.progressive.config.DatabaseConnectionManager;
 import com.edutech.progressive.entity.Product;
-
 public class ProductDAOImpl implements ProductDAO {
 
     @Override
