@@ -6,14 +6,7 @@ import com.edutech.progressive.service.SupplierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -26,57 +19,71 @@ public class SupplierController {
     SupplierService supplierService;
 
     @GetMapping
-    public ResponseEntity<List<Supplier>> getAllSuppliers() {
-        return null;
+    public ResponseEntity<List<Supplier>> getAllSuppliers() throws SQLException {
+        List<Supplier> suppliers = supplierService.getAllSuppliers();
+        if (suppliers == null || suppliers.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(suppliers, HttpStatus.OK);
     }
 
     @GetMapping("/{supplierId}")
     public ResponseEntity<Supplier> getSupplierById(
-            @PathVariable Integer supplierId) {
-        return null;
+            @PathVariable Integer supplierId) throws SQLException {
+        Supplier supplier = supplierService.getSupplierById(supplierId);
+        if (supplier == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(supplier, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Integer> addSupplier(
-            @RequestBody Supplier supplier) {
-        return null;
+            @RequestBody Supplier supplier) throws SQLException {
+        Integer id = supplierService.addSupplier(supplier);
+        return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @PutMapping("/{supplierId}")
     public ResponseEntity<Void> updateSupplier(
             @PathVariable Integer supplierId,
-            @RequestBody Supplier supplier) {
-        return null;
+            @RequestBody Supplier supplier) throws SQLException {
+        Supplier existing = supplierService.getSupplierById(supplierId);
+        if (existing == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        supplier.setSupplierId(supplierId);
+        supplierService.updateSupplier(supplier);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{supplierId}")
     public ResponseEntity<Void> deleteSupplier(
-            @PathVariable Integer supplierId) {
-        return null;
+            @PathVariable Integer supplierId) throws SQLException {
+        Supplier existing = supplierService.getSupplierById(supplierId);
+        if (existing == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        supplierService.deleteSupplier(supplierId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/fromArrayList")
     public ResponseEntity<List<Supplier>> getAllSuppliersFromArrayList() throws SQLException {
-
         List<Supplier> list = supplierService.getAllSuppliers();
-
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @PostMapping("/toArrayList")
     public ResponseEntity<Integer> addSupplierToArrayList(
             @RequestBody Supplier supplier) throws SQLException {
-
         int id = supplierService.addSupplier(supplier);
-
         return new ResponseEntity<>(id, HttpStatus.CREATED);
     }
 
     @GetMapping("/fromArrayList/all")
     public ResponseEntity<List<Supplier>> getAllSuppliersSortedByNameFromArrayList() throws SQLException {
-
         List<Supplier> sortedList = supplierService.getAllSuppliersSortedByName();
-
         return new ResponseEntity<>(sortedList, HttpStatus.OK);
     }
 }
