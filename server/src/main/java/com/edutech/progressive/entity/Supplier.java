@@ -1,34 +1,57 @@
 package com.edutech.progressive.entity;
 
-import javax.persistence.*;
+import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
-@Table(name = "supplier")
-public class Supplier implements Comparable<Supplier> {
-
+public class Supplier implements Comparable<Supplier>
+{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "supplier_id")
-    private Integer supplierId;
-
-    @Column(name = "supplier_name")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int supplierId;
     private String supplierName;
-
     private String email;
     private String phone;
     private String address;
     private String username;
+
+    @JsonIgnore
     private String password;
+
     private String role;
+
+    @OneToMany(mappedBy = "supplier")
+    @JsonIgnoreProperties({"supplier", "products"})
+    private List<Warehouse> warehouses;
 
     public Supplier() {
     }
 
-    public Integer getSupplierId() {
+    public Supplier(int supplierId, String supplierName, String email, String phone, String address, String username,
+            String password, String role) {
+        this.supplierId = supplierId;
+        this.supplierName = supplierName;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
+
+    public int getSupplierId() {
         return supplierId;
     }
 
-    public void setSupplierId(Integer supplierId) {
+    public void setSupplierId(int supplierId) {
         this.supplierId = supplierId;
     }
 
@@ -88,8 +111,16 @@ public class Supplier implements Comparable<Supplier> {
         this.role = role;
     }
 
+    public List<Warehouse> getWarehouses() {
+        return warehouses;
+    }
+
+    public void setWarehouses(List<Warehouse> warehouses) {
+        this.warehouses = warehouses;
+    }
+
     @Override
-    public int compareTo(Supplier o) {
-        return this.supplierName.compareToIgnoreCase(o.supplierName);
+    public int compareTo(Supplier arg0) {
+        return this.getSupplierName().compareTo(arg0.getSupplierName());
     }
 }

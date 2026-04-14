@@ -1,51 +1,68 @@
 package com.edutech.progressive.service.impl;
 
-import com.edutech.progressive.entity.Warehouse;
-import com.edutech.progressive.repository.WarehouseRepository;
-import com.edutech.progressive.service.WarehouseService;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-import java.util.List;
+import com.edutech.progressive.entity.Warehouse;
+import com.edutech.progressive.repository.WarehouseRepository;
+import com.edutech.progressive.service.WarehouseService;
 
 @Service
 public class WarehouseServiceImplJpa implements WarehouseService {
 
-    private final WarehouseRepository warehouseRepository;
 
+    
+    private WarehouseRepository warehouseRepository;
+    
+
+    
+    
     @Autowired
     public WarehouseServiceImplJpa(WarehouseRepository warehouseRepository) {
         this.warehouseRepository = warehouseRepository;
     }
 
     @Override
-    public List<Warehouse> getAllWarehouses() throws SQLException {
-        return warehouseRepository.getAllWarehouse();
+    public List<Warehouse> getAllWarehouses() {
+        return warehouseRepository.findAll();
     }
 
     @Override
-    public Warehouse getWarehouseById(int warehouseId) throws SQLException {
-        return warehouseRepository.getWarehouseById(warehouseId);
+    public int addWarehouse(Warehouse warehouse) {
+        Warehouse savedWarehouse = warehouseRepository.save(warehouse);
+        return savedWarehouse.getWarehouseId();
     }
 
     @Override
-    public int addWarehouse(Warehouse warehouse) throws SQLException {
-        return warehouseRepository.addWarehouse(warehouse);
+    public List<Warehouse> getWarehousesSortedByCapacity(){
+        List<Warehouse> warehouses = warehouseRepository.findAll();
+        Collections.sort(warehouses);
+        return warehouses;
     }
 
-    @Override
-    public void updateWarehouse(Warehouse warehouse) throws SQLException {
-        warehouseRepository.updateWarehouse(warehouse);
+    public void updateWarehouse(Warehouse warehouse){
+        warehouseRepository.save(warehouse);
+
     }
 
-    @Override
-    public void deleteWarehouse(int warehouseId) throws SQLException {
-        warehouseRepository.deleteWarehouse(warehouseId);
+    public void deleteWarehouse(int warehouseId){
+        Warehouse warehouse = warehouseRepository.findByWarehouseId(warehouseId);
+        warehouseRepository.delete(warehouse);
+
     }
 
-    @Override
-    public List<Warehouse> getWarehousesSortedByCapacity() throws SQLException {
-        return warehouseRepository.getAllWarehouse();
+    public Warehouse getWarehouseById(int warehouseId){
+        return warehouseRepository.findByWarehouseId(warehouseId);
+
     }
+
+    public List<Warehouse> getWarehouseBySupplier(int supplierId){
+        return warehouseRepository.findAllBySupplier_SupplierId(supplierId);
+    }
+
 }
