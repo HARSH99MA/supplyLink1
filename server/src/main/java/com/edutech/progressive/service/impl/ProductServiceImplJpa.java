@@ -12,9 +12,13 @@ import com.edutech.progressive.service.ProductService;
 @Service
 public class ProductServiceImplJpa implements ProductService {
 
+    private final ProductRepository productRepository;
+
     @Autowired
-    private ProductRepository productRepository;
-    //------
+    public ProductServiceImplJpa(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -22,27 +26,30 @@ public class ProductServiceImplJpa implements ProductService {
 
     @Override
     public Product getProductById(int productId) {
-        return productRepository.findByProductId(productId);
+        return productRepository.findById(productId).orElse(null);
     }
 
     @Override
     public int addProduct(Product product) {
-        Product savedProduct = productRepository.save(product);
-        return savedProduct.getProductId();
+        return productRepository.save(product).getProductId();
     }
 
     @Override
     public void updateProduct(Product product) {
-        productRepository.save(product);
+        if (productRepository.existsById(product.getProductId())) {
+            productRepository.save(product);
+        }
     }
 
     @Override
     public void deleteProduct(int productId) {
-        productRepository.deleteByProductId(productId);
+        if (productRepository.existsById(productId)) {
+            productRepository.deleteById(productId);
+        }
     }
 
     @Override
     public List<Product> getAllProductByWarehouse(int warehouseId) {
-        return productRepository.findByWarehouse_WarehouseId(warehouseId);
+        return productRepository.findAllByWarehouse_WarehouseId(warehouseId);
     }
 }

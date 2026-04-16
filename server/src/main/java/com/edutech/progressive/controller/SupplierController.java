@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -22,29 +23,29 @@ public class SupplierController {
     SupplierServiceImplArraylist supplierServiceImplArraylist;
 
     @GetMapping
-    public ResponseEntity<List<Supplier>> getAllSuppliers() {
+    public ResponseEntity<List<Supplier>> getAllSuppliers() throws SQLException {
         return new ResponseEntity<>(supplierService.getAllSuppliers(), HttpStatus.OK);
     }
 
     @GetMapping("/{supplierId}")
-    public ResponseEntity<Supplier> getSupplierById(@PathVariable int supplierId) {
+    public ResponseEntity<Supplier> getSupplierById(@PathVariable int supplierId) throws SQLException {
         return new ResponseEntity<>(supplierService.getSupplierById(supplierId), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Integer> addSupplier(@RequestBody Supplier supplier) {
+    public ResponseEntity<Integer> addSupplier(@RequestBody Supplier supplier) throws SQLException {
         return new ResponseEntity<>(supplierService.addSupplier(supplier), HttpStatus.CREATED);
     }
 
     @PutMapping("/{supplierId}")
-    public ResponseEntity<Void> updateSupplier(@PathVariable int supplierId, @RequestBody Supplier supplier) {
+    public ResponseEntity<Void> updateSupplier(@PathVariable int supplierId, @RequestBody Supplier supplier) throws SQLException {
         supplier.setSupplierId(supplierId);
         supplierService.updateSupplier(supplier);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/{supplierId}")
-    public ResponseEntity<Void> deleteSupplier(@PathVariable int supplierId) {
+    public ResponseEntity<Void> deleteSupplier(@PathVariable int supplierId) throws SQLException {
         supplierService.deleteSupplier(supplierId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
