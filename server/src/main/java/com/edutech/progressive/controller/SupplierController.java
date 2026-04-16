@@ -5,11 +5,9 @@ import com.edutech.progressive.service.impl.SupplierServiceImplArraylist;
 import com.edutech.progressive.service.impl.SupplierServiceImplJpa;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
 import java.util.List;
 
 @RestController
@@ -17,51 +15,54 @@ import java.util.List;
 public class SupplierController {
 
     @Autowired
-    SupplierServiceImplJpa supplierService;
+    private SupplierServiceImplArraylist supplierServiceImplArraylist;
 
     @Autowired
-    SupplierServiceImplArraylist supplierServiceImplArraylist;
+    private SupplierServiceImplJpa supplierServiceImplJpa;
 
     @GetMapping
-    public ResponseEntity<List<Supplier>> getAllSuppliers() throws SQLException {
-        return new ResponseEntity<>(supplierService.getAllSuppliers(), HttpStatus.OK);
+    public ResponseEntity<List<Supplier>> getAllSuppliers() {
+        return ResponseEntity.ok(supplierServiceImplJpa.getAllSuppliers());
     }
 
     @GetMapping("/{supplierId}")
-    public ResponseEntity<Supplier> getSupplierById(@PathVariable int supplierId) throws SQLException {
-        return new ResponseEntity<>(supplierService.getSupplierById(supplierId), HttpStatus.OK);
+    public ResponseEntity<Supplier> getSupplierById(@PathVariable int supplierId) {
+        return ResponseEntity.ok(supplierServiceImplJpa.getSupplierById(supplierId));
     }
 
     @PostMapping
-    public ResponseEntity<Integer> addSupplier(@RequestBody Supplier supplier) throws SQLException {
-        return new ResponseEntity<>(supplierService.addSupplier(supplier), HttpStatus.CREATED);
+    public ResponseEntity<Integer> addSupplier(@RequestBody Supplier supplier) {
+        return ResponseEntity.status(201)
+                .body(supplierServiceImplJpa.addSupplier(supplier));
     }
 
-    @PutMapping("/{supplierId}")
-    public ResponseEntity<Void> updateSupplier(@PathVariable int supplierId, @RequestBody Supplier supplier) throws SQLException {
-        supplier.setSupplierId(supplierId);
-        supplierService.updateSupplier(supplier);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping
+    public ResponseEntity<Void> updateSupplier(@RequestBody Supplier supplier) {
+        supplierServiceImplJpa.updateSupplier(supplier);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{supplierId}")
-    public ResponseEntity<Void> deleteSupplier(@PathVariable int supplierId) throws SQLException {
-        supplierService.deleteSupplier(supplierId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Void> deleteSupplier(@PathVariable int supplierId) {
+        supplierServiceImplJpa.deleteSupplier(supplierId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/fromArrayList")
     public ResponseEntity<List<Supplier>> getAllSuppliersFromArrayList() {
-        return new ResponseEntity<>(supplierServiceImplArraylist.getAllSuppliers(), HttpStatus.OK);
+        return ResponseEntity.ok(
+                supplierServiceImplArraylist.getAllSuppliers());
     }
 
-    @PostMapping({"/fromArrayList", "/toArrayList"})
+    @PostMapping("/toArrayList")
     public ResponseEntity<Integer> addSupplierToArrayList(@RequestBody Supplier supplier) {
-        return new ResponseEntity<>(supplierServiceImplArraylist.addSupplier(supplier), HttpStatus.CREATED);
+        return ResponseEntity.status(201)
+                .body(supplierServiceImplArraylist.addSupplier(supplier));
     }
 
-    @GetMapping("/fromArrayList/listAll")
+    @GetMapping("/fromArrayList/all")
     public ResponseEntity<List<Supplier>> getAllSuppliersSortedByNameFromArrayList() {
-        return new ResponseEntity<>(supplierServiceImplArraylist.getAllSuppliersSortedByName(), HttpStatus.OK);
+        return ResponseEntity.ok(
+                supplierServiceImplArraylist.getAllSuppliersSortedByName());
     }
 }
